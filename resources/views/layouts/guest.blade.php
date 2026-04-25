@@ -14,15 +14,19 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-            <div>
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
-                </a>
-            </div>
+    <body class="font-sans text-slate-100 antialiased">
+        <div class="min-h-screen flex items-center justify-center bg-slate-950 px-4 py-12 relative overflow-hidden">
+            <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(14,165,233,0.25),transparent_20%),radial-gradient(circle_at_bottom_right,_rgba(99,102,241,0.24),transparent_25%)]"></div>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
+            <div class="relative w-full max-w-md rounded-[2rem] border border-white/10 bg-slate-900/95 p-8 shadow-2xl shadow-slate-950/40 backdrop-blur-xl">
+                <div class="mb-8 text-center">
+                    <a href="/" class="inline-flex items-center justify-center rounded-full bg-cyan-500/15 px-3 py-2 text-sm font-semibold text-cyan-200 backdrop-blur-sm">
+                        {{ config('app.name', 'Appointment System') }}
+                    </a>
+                    <h1 class="mt-6 text-3xl font-semibold text-white">{{ __('Welcome') }}</h1>
+                    <p class="mt-2 text-sm text-slate-400">{{ __('Secure access to your appointments and services.') }}</p>
+                </div>
+
                 {{ $slot }}
             </div>
         </div>

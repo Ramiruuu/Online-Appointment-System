@@ -1,89 +1,76 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('My Appointments') }}
-        </h2>
+        <h2 class="text-3xl font-semibold tracking-tight text-white">{{ __('My Appointments') }}</h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="space-y-6">
             @if(session('success'))
-                <div class="mb-4 rounded-lg bg-green-50 p-4 text-sm text-green-700">
-                    {{ session('success') }}
-                </div>
+                <div class="rounded-3xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-sm text-emerald-100">{{ session('success') }}</div>
             @endif
-
             @if(session('error'))
-                <div class="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-700">
-                    {{ session('error') }}
-                </div>
+                <div class="rounded-3xl border border-rose-500/20 bg-rose-500/10 p-4 text-sm text-rose-100">{{ session('error') }}</div>
             @endif
 
-            <div class="grid gap-6 lg:grid-cols-2">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                    <h3 class="text-lg font-semibold text-gray-900">{{ __('Upcoming Appointments') }}</h3>
-                    <div class="mt-4 space-y-4">
+            <div class="grid gap-6 xl:grid-cols-2">
+                <section class="app-card p-8">
+                    <h3 class="text-xl font-semibold text-white">{{ __('Upcoming Appointments') }}</h3>
+                    <div class="mt-6 space-y-4">
                         @forelse($upcoming as $appointment)
-                            <div class="rounded-lg border border-gray-200 p-4">
-                                <div class="flex items-center justify-between">
+                            <article class="rounded-3xl border border-slate-700/80 bg-slate-950/70 p-5">
+                                <div class="flex items-start justify-between gap-4">
                                     <div>
-                                        <div class="text-sm font-semibold text-gray-800">{{ $appointment->service->name }}</div>
-                                        <div class="text-sm text-gray-500">{{ $appointment->appointment_date->format('F j, Y g:i A') }}</div>
+                                        <p class="text-sm text-cyan-300">{{ $appointment->service->name }}</p>
+                                        <p class="mt-2 text-sm text-slate-300">{{ $appointment->appointment_date->format('F j, Y g:i A') }}</p>
                                     </div>
-                                    <span class="rounded-full px-3 py-1 text-xs font-semibold {{ $appointment->status === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">{{ ucfirst($appointment->status) }}</span>
+                                    <span class="rounded-full px-3 py-1 text-xs font-semibold {{ $appointment->status === 'confirmed' ? 'bg-emerald-500/15 text-emerald-200' : 'bg-amber-500/15 text-amber-200' }}">{{ ucfirst($appointment->status) }}</span>
                                 </div>
-                                <div class="mt-4 flex items-center justify-between gap-3">
-                                    <a href="{{ route('appointments.show', $appointment) }}" class="text-sm text-indigo-600 hover:text-indigo-900">{{ __('View details') }}</a>
+                                <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                    <a href="{{ route('appointments.show', $appointment) }}" class="text-sm font-semibold text-cyan-300 hover:text-white">{{ __('View details') }}</a>
                                     @if(in_array($appointment->status, ['pending', 'confirmed']) && $appointment->appointment_date->isFuture())
-                                        <details class="rounded border border-gray-200 bg-gray-50 p-3">
-                                            <summary class="cursor-pointer text-sm font-medium text-red-600">{{ __('Cancel appointment') }}</summary>
-                                            <form method="POST" action="{{ route('appointments.cancel', $appointment) }}" class="mt-3 space-y-3">
+                                        <details class="rounded-3xl border border-slate-700/80 bg-slate-900/90 p-4">
+                                            <summary class="cursor-pointer text-sm font-semibold text-rose-400">{{ __('Cancel appointment') }}</summary>
+                                            <form method="POST" action="{{ route('appointments.cancel', $appointment) }}" class="mt-4 space-y-3">
                                                 @csrf
                                                 @method('DELETE')
-
                                                 <div>
-                                                    <x-input-label for="cancellation_reason_{{ $appointment->id }}" :value="__('Cancellation Reason')" />
-                                                    <textarea id="cancellation_reason_{{ $appointment->id }}" name="cancellation_reason" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500" required>{{ old('cancellation_reason') }}</textarea>
-                                                    <x-input-error :messages="$errors->get('cancellation_reason')" class="mt-2" />
+                                                    <label for="cancellation_reason_{{ $appointment->id }}" class="form-label">{{ __('Cancellation Reason') }}</label>
+                                                    <textarea id="cancellation_reason_{{ $appointment->id }}" name="cancellation_reason" rows="3" class="form-input" placeholder="{{ __('Reason for cancellation') }}" required>{{ old('cancellation_reason') }}</textarea>
+                                                    <x-input-error :messages="$errors->get('cancellation_reason')" class="mt-2 text-sm text-rose-400" />
                                                 </div>
-
-                                                <x-primary-button class="bg-red-600 hover:bg-red-700">
-                                                    {{ __('Submit cancellation') }}
-                                                </x-primary-button>
+                                                <x-primary-button class="btn-primary w-full">{{ __('Submit cancellation') }}</x-primary-button>
                                             </form>
                                         </details>
                                     @endif
                                 </div>
-                            </div>
+                            </article>
                         @empty
-                            <p class="text-sm text-gray-500">{{ __('You have no upcoming appointments.') }}</p>
+                            <p class="text-sm text-slate-400">{{ __('You have no upcoming appointments.') }}</p>
                         @endforelse
                     </div>
-                </div>
+                </section>
 
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                    <h3 class="text-lg font-semibold text-gray-900">{{ __('Past Appointments') }}</h3>
-                    <div class="mt-4 space-y-4">
+                <section class="app-card p-8">
+                    <h3 class="text-xl font-semibold text-white">{{ __('Past Appointments') }}</h3>
+                    <div class="mt-6 space-y-4">
                         @forelse($past as $appointment)
-                            <div class="rounded-lg border border-gray-200 p-4">
-                                <div class="flex items-center justify-between">
+                            <article class="rounded-3xl border border-slate-700/80 bg-slate-950/70 p-5">
+                                <div class="flex items-start justify-between gap-4">
                                     <div>
-                                        <div class="text-sm font-semibold text-gray-800">{{ $appointment->service->name }}</div>
-                                        <div class="text-sm text-gray-500">{{ $appointment->appointment_date->format('F j, Y g:i A') }}</div>
+                                        <p class="text-sm text-cyan-300">{{ $appointment->service->name }}</p>
+                                        <p class="mt-2 text-sm text-slate-300">{{ $appointment->appointment_date->format('F j, Y g:i A') }}</p>
                                     </div>
-                                    <span class="rounded-full px-3 py-1 text-xs font-semibold {{ $appointment->status === 'completed' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' }}">{{ ucfirst($appointment->status) }}</span>
+                                    <span class="rounded-full px-3 py-1 text-xs font-semibold {{ $appointment->status === 'completed' ? 'bg-blue-500/15 text-blue-200' : 'bg-slate-500/15 text-slate-200' }}">{{ ucfirst($appointment->status) }}</span>
                                 </div>
                                 @if($appointment->cancellation_reason)
-                                    <div class="mt-3 text-sm text-gray-600">
-                                        <strong>{{ __('Reason:') }}</strong> {{ $appointment->cancellation_reason }}
-                                    </div>
+                                    <p class="mt-4 text-sm text-slate-300"><strong>{{ __('Reason:') }}</strong> {{ $appointment->cancellation_reason }}</p>
                                 @endif
-                            </div>
+                            </article>
                         @empty
-                            <p class="text-sm text-gray-500">{{ __('You have no past appointments.') }}</p>
+                            <p class="text-sm text-slate-400">{{ __('You have no past appointments.') }}</p>
                         @endforelse
                     </div>
-                </div>
+                </section>
             </div>
         </div>
     </div>
